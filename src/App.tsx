@@ -34,6 +34,20 @@ const staggerChildren = {
 };
 
 function App() {
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white font-sans">
       {/* Header */}
@@ -50,22 +64,28 @@ function App() {
               className="flex items-center space-x-2"
             >
               <img 
-                src="https://i.ibb.co/LzbgXT7z/hub4-logo-new.png" 
+                src="https://i.ibb.co/8gGkrTth/hub4-logo-new.png" 
                 alt="HUB4 Logo" 
-                className="h-12 w-auto brightness-0 invert"
+                className="h-12 w-auto"
               />
             </motion.div>
             <nav className="hidden md:flex space-x-8">
-              {['Home', 'Masterclass Schedule', 'Courses', 'Registration', 'Contact'].map((item, index) => (
-                <motion.a
+              {[
+                { name: 'Home', id: 'home' },
+                { name: 'Masterclass Schedule', id: 'schedule' },
+                { name: 'Courses', id: 'courses' },
+                { name: 'Registration', id: 'registration' },
+                { name: 'Contact', id: 'contact' }
+              ].map((item, index) => (
+                <motion.button
                   key={index}
-                  href={`#${item.toLowerCase().replace(' ', '-')}`}
-                  className="text-white/90 hover:text-white"
+                  onClick={() => scrollToSection(item.id)}
+                  className="text-white/90 hover:text-white cursor-pointer"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {item}
-                </motion.a>
+                  {item.name}
+                </motion.button>
               ))}
             </nav>
           </div>
@@ -73,7 +93,7 @@ function App() {
       </motion.header>
 
       {/* Hero Section - Dark */}
-      <section className="pt-24 pb-16 px-4 md:pt-32 bg-gray-900">
+      <section id="home" className="pt-24 pb-16 px-4 md:pt-32 bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <motion.div
@@ -131,14 +151,14 @@ function App() {
                 transition={{ delay: 0.6 }}
                 className="mt-8"
               >
-                <motion.a 
-                  href="#registration" 
+                <motion.button 
+                  onClick={() => scrollToSection('registration')}
                   className="inline-block bg-accent text-white px-8 py-3 rounded-lg font-semibold hover:bg-accent/90 transition-colors"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   Register Now
-                </motion.a>
+                </motion.button>
               </motion.div>
             </motion.div>
             <motion.div 
@@ -190,6 +210,7 @@ function App() {
 
       {/* About Section - Light */}
       <motion.section 
+        id="courses"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -200,10 +221,18 @@ function App() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl font-bold text-center mb-12 text-gray-900"
+            className="text-3xl font-bold text-center mb-4 text-gray-900"
           >
             What You Will Learn
           </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center text-gray-600 mb-12"
+          >
+            Master in-demand tech skills through hands-on projects and expert guidance in:
+          </motion.p>
           <motion.div 
             variants={staggerChildren}
             initial="initial"
@@ -212,12 +241,12 @@ function App() {
             className="grid md:grid-cols-3 gap-8"
           >
             {[
-              { title: 'Data Analysis', icon: <CheckCircle2 className="h-6 w-6 text-accent" /> },
-              { title: 'Cybersecurity', icon: <CheckCircle2 className="h-6 w-6 text-accent" /> },
-              { title: 'Animation', icon: <CheckCircle2 className="h-6 w-6 text-accent" /> },
-              { title: 'Data Engineering', icon: <CheckCircle2 className="h-6 w-6 text-accent" /> },
-              { title: 'Software Testing', icon: <CheckCircle2 className="h-6 w-6 text-accent" /> },
-              { title: 'Product Design', icon: <CheckCircle2 className="h-6 w-6 text-accent" /> },
+              { title: 'Data Analysis', description: 'Uncover insights with industry best practices.' },
+              { title: 'Cybersecurity', description: 'Safeguard systems with proven techniques.' },
+              { title: 'Animation', description: 'Bring creativity to life with professional tools.' },
+              { title: 'Data Engineering', description: 'Build robust data systems and pipelines.' },
+              { title: 'Software Testing', description: 'Ensure quality with industry-standard methods.' },
+              { title: 'Product Design', description: 'Design intuitive products with real-world skills.' }
             ].map((item, index) => (
               <motion.div
                 key={index}
@@ -226,11 +255,11 @@ function App() {
                 className="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
               >
                 <div className="flex items-center space-x-3 mb-4">
-                  {item.icon}
+                  <CheckCircle2 className="h-6 w-6 text-accent" />
                   <h3 className="font-semibold text-lg text-gray-900">{item.title}</h3>
                 </div>
                 <p className="text-gray-600">
-                  Learn practical skills and industry best practices in {item.title.toLowerCase()} through hands-on projects and expert guidance.
+                  {item.description}
                 </p>
               </motion.div>
             ))}
@@ -308,14 +337,14 @@ function App() {
                   <p className="text-accent font-semibold mb-4">
                     Register before February 28 and get a 15% discount!
                   </p>
-                  <motion.a 
-                    href="#registration"
+                  <motion.button 
+                    onClick={() => scrollToSection('registration')}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="block text-center bg-accent text-white px-6 py-3 rounded-lg font-semibold hover:bg-accent/90 transition-colors"
                   >
                     Register for the Full Cohort
-                  </motion.a>
+                  </motion.button>
                 </div>
               </motion.div>
             </div>
@@ -501,6 +530,7 @@ function App() {
 
       {/* Footer - Dark */}
       <motion.footer 
+        id="contact"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -518,9 +548,9 @@ function App() {
                 className="flex items-center space-x-2 mb-6"
               >
                 <img 
-                  src="https://i.ibb.co/LzbgXT7z/hub4-logo-new.png" 
+                  src="https://i.ibb.co/8gGkrTth/hub4-logo-new.png" 
                   alt="HUB4 Logo" 
-                  className="h-12 w-auto brightness-0 invert"
+                  className="h-12 w-auto"
                 />
               </motion.div>
               <motion.div variants={fadeIn} className="flex items-start space-x-3 mb-4">
@@ -544,14 +574,22 @@ function App() {
             >
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
               <ul className="space-y-2">
-                {['Home', 'Masterclass Schedule', 'Courses', 'Registration'].map((item, index) => (
+                {[
+                  { name: 'Home', id: 'home' },
+                  { name: 'Masterclass Schedule', id: 'schedule' },
+                  { name: 'Courses', id: 'courses' },
+                  { name: 'Registration', id: 'registration' }
+                ].map((item, index) => (
                   <motion.li
                     key={index}
                     whileHover={{ x: 5 }}
                   >
-                    <a href={`#${item.toLowerCase().replace(' ', '-')}`} className="hover:text-accent">
-                      {item}
-                    </a>
+                    <button 
+                      onClick={() => scrollToSection(item.id)}
+                      className="hover:text-accent"
+                    >
+                      {item.name}
+                    </button>
                   </motion.li>
                 ))}
               </ul>
@@ -569,22 +607,26 @@ function App() {
                 animate="animate"
                 className="flex space-x-4"
               >
-                {[
-                  { icon: <Facebook className="h-6 w-6" /> },
-                  { icon: <Twitter className="h-6 w-6" /> },
-                  { icon: <Instagram className="h-6 w-6" /> },
-                  { icon: <LinkedinIcon className="h-6 w-6" /> }
-                ].map((item, index) => (
-                  <motion.a
-                    key={index}
-                    href="#"
-                    className="hover:text-accent"
-                    whileHover={{ scale: 1.2, rotate: 5 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    {item.icon}
-                  </motion.a>
-                ))}
+                <motion.a
+                  href="https://web.facebook.com/profile.php?id=61570814582976"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-accent"
+                  whileHover={{ scale: 1.2, rotate: 5 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <Facebook className="h-6 w-6" />
+                </motion.a>
+                <motion.a
+                  href="https://www.instagram.com/hub4official/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-accent"
+                  whileHover={{ scale: 1.2, rotate: 5 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <Instagram className="h-6 w-6" />
+                </motion.a>
               </motion.div>
             </motion.div>
           </div>
